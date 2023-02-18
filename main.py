@@ -7,8 +7,6 @@ pg.theme("default1")
 
 dropdown_options = [ "FULL CONTENT", "BLANK", "SINGLE"]
 
-options = ["Option 1", "Option 2", "Option 3"]
-
 file_list_column = [
     [
         pg.Text("Mode", background_color='white', font='black', text_color='black'),
@@ -18,23 +16,36 @@ file_list_column = [
     ],
     [
         pg.Checkbox("TITLE", key="title", default=True),
+        pg.Input('Title:', expand_x=True)
+
     ],
     [
         pg.Checkbox("LEAD", key="lead", default=False),
+        pg.Input('Lead:', expand_x=True)
+
     ],
     [
         pg.Checkbox("PARAGRAPH", key="paragraph", default=True),
+        pg.Input('Paragraph:', expand_x=True)
     ],
     [
         pg.Checkbox("PHOTO", key="photo", default=True),
     ],
     [
         pg.Checkbox("NO EPISODE", key="noepisode", default=False),
+        pg.Input('Number:', expand_x=True)
     ],
     [
         pg.Button("RUN", expand_x=True)
     ],
 ]
+
+def setMode(title, lead, paragraph, photo, noepisode):
+    window['title'].update(title)
+    window['lead'].update(lead)
+    window['paragraph'].update(paragraph)
+    window['photo'].update(photo)
+    window['noepisode'].update(noepisode)
 
 file_viewer_column = [
     [pg.Text("TXT", size=(50, 1))],
@@ -64,17 +75,9 @@ while True:
     elif event == "SET":
         selected_value = values['OPERATION']
         if selected_value == 'FULL CONTENT':
-            window['lead'].update(True)
-            window['noepisode'].update(False)
+            setMode(True,True,True,True,True)
         elif selected_value == 'BLANK':
-            window['noepisode'].update(False)
-            window['title'].update(False)
-            window['paragraph'].update(False)
-            window['paragraph'].update(False)
-            window['photo'].update(False)
-
-
-
+            setMode(False,False,False,False,False)
 
 
 
