@@ -33,7 +33,7 @@ data = {
     },
     'Sunday': {
         'Powroty': {'Single': 'https://cms.tvp.pl/listing/47439908'},
-        'Fajna Polska': {'Single': 'https://cms.tvp.pl/listing/60355164'},
+        'Fajna Polska': {'Single': 'https://cms.tvp.pl/listing/65539809'},
     },
 }
 
