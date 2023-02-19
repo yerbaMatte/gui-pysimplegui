@@ -2,43 +2,71 @@ import PySimpleGUI as pg
 
 with open("/Users/milek/PycharmProjects/pipMindBlower/ny.txt", "r") as file:
     file_contents = file.read()
-# Step 1: Set theme
-pg.theme("default1")
 
+
+pg.theme("Reddit")
+times = 0
+font = ('Helvetica', 18)
 dropdown_options = [ "FULL CONTENT", "BLANK", "SINGLE"]
 
 file_list_column = [
     [
-        pg.Text("Mode", background_color='white', font='black', text_color='black'),
-        pg.DropDown(dropdown_options, key="OPERATION", size=(20, 1), pad=(10,20)),
+        pg.Text("Mode", background_color='white', font=('Helvetica', 30), text_color='black'),
+        pg.DropDown(dropdown_options, key="OPERATION", size=(20, 1), pad=(10,20), expand_x=True),
         pg.Button("SET", size=(15, 1))
 
     ],
     [
         pg.Checkbox("TITLE", key="title", default=True),
-        pg.Input('Title:', expand_x=True)
+        pg.Input( expand_x=True)
 
     ],
     [
         pg.Checkbox("LEAD", key="lead", default=False),
-        pg.Input('Lead:', expand_x=True)
+        pg.Input(expand_x=True)
 
     ],
     [
         pg.Checkbox("PARAGRAPH", key="paragraph", default=True),
-        pg.Input('Paragraph:', expand_x=True)
+        pg.Input(expand_x=True)
     ],
     [
         pg.Checkbox("PHOTO", key="photo", default=True),
     ],
     [
         pg.Checkbox("NO EPISODE", key="noepisode", default=False),
-        pg.Input('Number:', expand_x=True)
+        pg.Input(expand_x=True)
     ],
     [
         pg.Button("RUN", expand_x=True)
     ],
 ]
+
+file_viewer_column = [
+    [pg.Text("TXT", size=(50, 1))],
+    [pg.Multiline(size=(70, 30), key="-TEXT-", default_text=file_contents)],
+    [pg.Button("Save", expand_x=True), pg.Button("Undo", expand_x=True)],
+]
+
+console_viewer_column = [
+    [pg.Text("CONSOLE", size=(50, 1))],
+    [pg.Output(size=(70, 30))],
+    [pg.Button("Save", expand_x=True), pg.Button("Undo", expand_x=True)],
+]
+
+tabs = [
+    [pg.Tab("ny.txt", file_viewer_column)],
+    [pg.Tab("console", console_viewer_column)],
+]
+
+layout = [
+    [
+        pg.Column(file_list_column),
+        pg.VSeperator(),
+        pg.TabGroup(tabs)
+    ]
+]
+
 
 def setMode(title, lead, paragraph, photo, noepisode):
     window['title'].update(title)
@@ -47,21 +75,8 @@ def setMode(title, lead, paragraph, photo, noepisode):
     window['photo'].update(photo)
     window['noepisode'].update(noepisode)
 
-file_viewer_column = [
-    [pg.Text("TXT", size=(50, 1))],
-    [pg.Multiline(size=(70, 30), key="-TEXT-", default_text=file_contents)],
-    [pg.Button("Save", expand_x=True), pg.Button("Undo", expand_x=True), ],
-]
 
-layout = [
-    [
-        pg.Column(file_list_column),
-        pg.VSeperator(),
-        pg.Column(file_viewer_column)
-    ]
-]
-# Step 3: Create Window
-window = pg.Window("PipiMindBlower", layout)
+window = pg.Window("PipiMindBlower", layout, font=font)
 
 while True:
     event, values = window.read()
@@ -70,6 +85,7 @@ while True:
     elif event == "Save":
         with open("/Users/milek/PycharmProjects/pipMindBlower/ny.txt", "w") as file:
             file.write(values["-TEXT-"])
+        print(values["-TEXT-"])
     elif event == "Undo":
         window["-TEXT-"].update(file_contents)
     elif event == "SET":
@@ -78,7 +94,6 @@ while True:
             setMode(True,True,True,True,True)
         elif selected_value == 'BLANK':
             setMode(False,False,False,False,False)
-
 
 
 window.close()
