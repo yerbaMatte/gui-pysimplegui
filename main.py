@@ -2,63 +2,45 @@ import PySimpleGUI as pg
 
 with open("/Users/milek/PycharmProjects/pipMindBlower/ny.txt", "r") as file:
     file_contents = file.read()
+# ////////////////
 
-#
-treedata = pg.TreeData()
 
-rootnodes=[
-   ["","MON", "Monday", 175, 150, 200],
-   ["MON", "PS", "Polacy swiatu", 100, 100,100],
-   ["MON", "KPP", "Kamperem po pld", 30, 20, 40],
-   ["","TUE", "Tuesday", 120, 80, 125],
-   ["TUE", "NN", "Nad Niemnem", 75, 55, 80],
-   ["TUE", "SL", "Studio Lwow", 25, 15, 30],
-   ["","WED", "Wednesday", 175, 150, 200],
-   ["WED", "KZ", "Kierunek zachod", 100, 100,100],
-   ["WED", "MZW", "Magazyn z wysp", 30, 20, 40],
-   ["","THU", "Thursday", 120, 80, 125],
-   ["THU", "SI", "Stacja innowacja", 75, 55, 80],
-   ["THU", "WSCH", "Wschod", 25, 15, 30],
-   ["THU", "WILN", "Wilnoteka", 25, 15, 30],
-   ["","FRI", "Friday", 175, 150, 200],
-   ["FRI", "PE", "Polonia express", 100, 100,100],
-   ["FRI", "PA", "Przystanek ameryka", 30, 20, 40],
-   ["FRI", "OP", "Ola Polonia", 30, 20, 40],
-   ["","SAT", "Saturday", 120, 80, 125],
-   ["SAT", "KPL", "KulturalniPL", 75, 55, 80],
-   ["","SUN", "Sunday", 175, 150, 200],
-   ["SUN", "POWR", "Powroty", 100, 100,100],
-   ["SUN", "FP", "Fajna Polska", 30, 20, 40],
-]
-
-for row in rootnodes:
-   treedata.Insert( row[0], row[1], row[2], row[3:])
-tree=pg.Tree(data=treedata,
-   headings=['SINGLE','MULTI'],
-   auto_size_columns=True,
-   select_mode=pg.TABLE_SELECT_MODE_BROWSE,
-   num_rows=10,
-   col0_width=5,
-   key='-TREE-',
-   show_expanded=False,
-   enable_events=True,
-   expand_x=True,
-   expand_y=True,
-)
-
-week = {
-    "mon" : {'kpl' : 'https://cms.tvp.pl/listing/20768432'},
-    "tue": {'stw': 'https://cms.tvp.pl/listing/53261143', 'nn': 'https://cms.tvp.pl/listing/43219320'},
-    "wed": {'mgzw': 'https://cms.tvp.pl/listing/29486855', 'kz': 'https://cms.tvp.pl/listing/25985428'},
-    "thu": {'wilno': 'https://cms.tvp.pl/listing/19748036', 'wschod':'https://cms.tvp.pl/listing/45512868'},
-    "fri": {'pe': 'https://cms.tvp.pl/listing/53451124', 'op': 'https://cms.tvp.pl/listing/53337182', 'ae': 'https://cms.tvp.pl/listing/54528538'},
-    "sut": {'test': 'test', 'dwa': 'trzy'},
-    "sun": {'test': 'test', 'dwa': 'trzy'}
+data = {
+    'Monday': {
+        'Polacy swiatu': {'Single': 'https://cms.tvp.pl/listing/55650523'},
+        'Kamperem po pld': {'Single': 'https://cms.tvp.pl/listing/60328558'},
+    },
+    'Tuesday': {
+        'Nad Niemnem': {'Multi': 'https://cms.tvp.pl/listing/43219320'},
+        'Studio Lwow': {'Single': 'https://cms.tvp.pl/listing/49597795', 'Multi': 'https://cms.tvp.pl/listing/53261143'},
+    },
+    'Wednesday': {
+        'Kierunek zachod': {'Single': 'https://cms.tvp.pl/listing/36741898', 'Multi': 'https://cms.tvp.pl/listing/25985428'},
+        'Magazyn z wysp': {'Single': 'https://cms.tvp.pl/listing/29473547', 'Multi': 'https://cms.tvp.pl/listing/29486855'},
+    },
+    'Thursday': {
+        'Stacja innowacja': {'Single': 'https://cms.tvp.pl/listing/49597789'},
+        'Wschod': {'Single': 'https://cms.tvp.pl/listing/45512868'},
+        'Wilnoteka': {'Multi': 'https://cms.tvp.pl/listing/19748036'}
+    },
+    'Friday': {
+        'Polonia express': {'Single': 'https://cms.tvp.pl/listing/49597817', 'Multi': 'https://cms.tvp.pl/listing/53451124'},
+        'Przystanek ameryka': {'Single': 'https://cms.tvp.pl/listing/45742428'},
+        'Ola Polonia': {'Single': 'https://cms.tvp.pl/listing/50566544', 'Multi': 'https://cms.tvp.pl/listing/53337182'}
+    },
+    'Saturday': {
+        'KulturalniPL': {'Multi': 'https://cms.tvp.pl/listing/20768432'},
+    },
+    'Sunday': {
+        'Powroty': {'Single': 'https://cms.tvp.pl/listing/47439908'},
+        'Fajna Polska': {'Single': 'https://cms.tvp.pl/listing/60355164'},
+    },
 }
 
+data_choices = list(data.keys())
 
-#
 
+# ////////////////
 pg.theme("Reddit")
 times = 0
 font = ('Helvetica', 18)
@@ -95,7 +77,10 @@ file_list_column = [
     [
         pg.Button("RUN", expand_x=True)
     ],
-    [tree]
+    [pg.Text('Select a category:')],
+    [pg.Listbox(data_choices, size=(15, 8), expand_x=True, key='-WEEK-', enable_events=True),
+     pg.Listbox([], size=(15, 8), expand_x=True, key='-DAY-', enable_events=True),
+     pg.Listbox([], size=(15, 8), expand_x=True, key='-PROGRAMME-', enable_events=True)],
 ]
 
 file_viewer_column = [
@@ -138,6 +123,15 @@ while True:
     event, values = window.read()
     if event == pg.WIN_CLOSED or event == "Exit":
         break
+    elif event == '-WEEK-':
+        selected_day = values['-WEEK-'][0]
+        window['-DAY-'].update(data[selected_day])
+    elif event == '-DAY-':
+        selected_option = values['-DAY-'][0]
+        window['-PROGRAMME-'].update(data[selected_day][selected_option])
+    elif event == '-PROGRAMME-':
+        selected_kind = values['-PROGRAMME-'][0]
+        print(f'{selected_option} | {selected_kind} | {data[selected_day][selected_option][selected_kind]}')
     elif event == "Save":
         with open("/Users/milek/PycharmProjects/pipMindBlower/ny.txt", "w") as file:
             file.write(values["-TEXT-"])
